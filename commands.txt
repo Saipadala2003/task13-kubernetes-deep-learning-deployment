@@ -1,0 +1,34 @@
+# Task 13 command log
+
+minikube start --driver=docker
+minikube status
+kubectl get nodes
+
+minikube image load task11-flask-api:latest
+minikube image load task11-streamlit-ui:latest
+minikube image ls
+
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/flask-deployment.yaml
+kubectl apply -f k8s/flask-service.yaml
+kubectl apply -f k8s/streamlit-deployment.yaml
+kubectl apply -f k8s/streamlit-service.yaml
+
+kubectl get all -n task13
+kubectl get pods -n task13 -o wide
+kubectl get services -n task13
+
+kubectl exec -n task13 deployment/streamlit-ui -- python -c "import urllib.request; print(urllib.request.urlopen('http://flask-api:5000/health').read().decode())"
+
+kubectl logs -n task13 deployment/flask-api
+kubectl logs -n task13 deployment/streamlit-ui
+
+minikube service streamlit-ui -n task13
+minikube service streamlit-ui -n task13 --url
+
+# Optional final inspection
+kubectl get deployments -n task13
+kubectl get endpoints -n task13
+
+# Cleanup after evaluation
+# kubectl delete namespace task13
